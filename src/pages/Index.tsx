@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -65,9 +66,18 @@ const todaysWords = [
 
 const Index = () => {
   const [selectedWord, setSelectedWord] = useState<number | null>(null);
+  const navigate = useNavigate();
   
   const handleWordClick = (idx: number) => {
     setSelectedWord(idx === selectedWord ? null : idx);
+  };
+
+  const handleLevelClick = (levelId: string) => {
+    // Find first word in the level to navigate to
+    const level = mockLevels.find(l => l.id === levelId);
+    if (level && !level.locked && level.words.length > 0) {
+      navigate(`/learn/${level.words[0]}`);
+    }
   };
 
   return (
@@ -115,6 +125,7 @@ const Index = () => {
                   variant="ghost"
                   className="ml-2"
                   disabled={level.locked}
+                  onClick={() => handleLevelClick(level.id)}
                 >
                   <ChevronRight className="h-5 w-5" />
                 </Button>

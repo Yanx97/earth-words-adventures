@@ -10,6 +10,7 @@ import Collection from "./pages/Collection";
 import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import WordLearningPage from "./pages/WordLearningPage";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/collection" element={<Collection />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/learn/:wordId" element={<WordLearningPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
