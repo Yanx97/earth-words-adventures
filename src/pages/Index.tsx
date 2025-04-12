@@ -3,7 +3,8 @@ import { useState } from "react";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronRight, Volume2 } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import WordCard from "@/components/WordCard";
 
 // Mock data
 const mockLevels = [
@@ -39,16 +40,25 @@ const todaysWords = [
   {
     word: "erupt",
     translation: "爆发",
+    partOfSpeech: "verb",
+    phonetic: "/ɪˈrʌpt/",
+    meaning: "To suddenly burst out or break open, especially of a volcano sending out rocks, ash, lava, etc.",
     example: "The volcano could erupt at any moment."
   },
   {
     word: "magma",
     translation: "岩浆",
+    partOfSpeech: "noun",
+    phonetic: "/ˈmæɡ.mə/",
+    meaning: "Hot fluid or semi-fluid material below or within the earth's crust from which lava is formed.",
     example: "Magma forms deep within the Earth."
   },
   {
     word: "crust",
     translation: "地壳",
+    partOfSpeech: "noun",
+    phonetic: "/krʌst/",
+    meaning: "The outermost layer of the Earth.",
     example: "The Earth's crust is the outermost layer."
   }
 ];
@@ -56,9 +66,8 @@ const todaysWords = [
 const Index = () => {
   const [selectedWord, setSelectedWord] = useState<number | null>(null);
   
-  const handlePlayAudio = (word: string) => {
-    console.log(`Playing audio for ${word}`);
-    // Here we would use a speech synthesis API
+  const handleWordClick = (idx: number) => {
+    setSelectedWord(idx === selectedWord ? null : idx);
   };
 
   return (
@@ -126,33 +135,12 @@ const Index = () => {
           <h2 className="text-xl font-bold mb-4">Today's Words</h2>
           <div className="space-y-3">
             {todaysWords.map((wordItem, idx) => (
-              <div 
+              <WordCard
                 key={wordItem.word}
-                className={`word-card ${selectedWord === idx ? 'ring-2 ring-primary' : ''}`}
-                onClick={() => setSelectedWord(idx === selectedWord ? null : idx)}
-              >
-                <div className="p-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-bold">{wordItem.word}</h3>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePlayAudio(wordItem.word);
-                      }}
-                      className="p-1.5 rounded-full hover:bg-muted transition-colors"
-                    >
-                      <Volume2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <p className="text-muted-foreground">{wordItem.translation}</p>
-                  
-                  {selectedWord === idx && (
-                    <div className="mt-3 pt-3 border-t text-sm">
-                      <p>{wordItem.example}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+                wordData={wordItem}
+                expanded={selectedWord === idx}
+                onClick={() => handleWordClick(idx)}
+              />
             ))}
           </div>
         </div>
