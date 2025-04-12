@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -32,12 +32,97 @@ const bgImages = {
   "atmosphere": "bg-gradient-to-b from-earth-atmosphere to-earth-sky",
 };
 
+// Placeholder SVG paths for the different layers
+const layerPaths = {
+  "earth-layers": {
+    "crust": { color: "#8B4513", top: "0%", height: "20%" },
+    "mantle": { color: "#FF4500", top: "20%", height: "60%" },
+    "core": { color: "#FFD700", top: "80%", height: "20%" },
+    "lithosphere": { color: "#556B2F", top: "0%", height: "10%" },
+  },
+  "volcanoes": {
+    "volcano": { color: "#A52A2A", top: "40%", height: "60%" },
+    "erupt": { color: "#FF4500", top: "0%", height: "50%" },
+    "magma": { color: "#FF8C00", top: "50%", height: "30%" },
+    "lava": { color: "#FF0000", top: "80%", height: "20%" },
+  },
+  "atmosphere": {
+    "atmosphere": { color: "#87CEEB", top: "0%", height: "100%" },
+    "oxygen": { color: "#00BFFF", top: "20%", height: "40%" },
+    "carbon-dioxide": { color: "#4682B4", top: "60%", height: "40%" },
+  }
+};
+
+interface PlacedSticker {
+  id: string;
+  x: number;
+  y: number;
+  image: string;
+}
+
 const Collection = () => {
   const [selectedTab, setSelectedTab] = useState("earth-layers");
   const [selectedSticker, setSelectedSticker] = useState<string | null>(null);
+  const [draggedSticker, setDraggedSticker] = useState<string | null>(null);
+  const [placedStickers, setPlacedStickers] = useState<{ [key: string]: PlacedSticker[] }>({
+    "earth-layers": [],
+    "volcanoes": [],
+    "atmosphere": [],
+  });
+  const [activeLayers, setActiveLayers] = useState<{ [key: string]: { [key: string]: boolean } }>({
+    "earth-layers": {},
+    "volcanoes": {},
+    "atmosphere": {},
+  });
+  const sceneRef = useRef<HTMLDivElement>(null);
 
   const handleStickerClick = (id: string) => {
     setSelectedSticker(selectedSticker === id ? null : id);
+  };
+
+  const handleDragStart = (e: React.DragEvent, stickerId: string, image: string) => {
+    e.dataTransfer.setData("stickerId", stickerId);
+    e.dataTransfer.setData("image", image);
+    setDraggedSticker(stickerId);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedSticker(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    
+    const stickerId = e.dataTransfer.getData("stickerId");
+    const image = e.dataTransfer.getData("image");
+    
+    if (!stickerId || !sceneRef.current) return;
+    
+    const rect = sceneRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    // Update placed stickers
+    setPlacedStickers(prev => ({
+      ...prev,
+      [selectedTab]: [
+        ...prev[selectedTab],
+        { id: stickerId, x, y, image }
+      ]
+    }));
+
+    // Activate this layer
+    setActiveLayers(prev => ({
+      ...prev,
+      [selectedTab]: {
+        ...prev[selectedTab],
+        [stickerId]: true
+      }
+    }));
   };
 
   return (
@@ -71,16 +156,61 @@ const Collection = () => {
           
           {Object.entries(stickers).map(([category, categoryStickers]) => (
             <TabsContent key={category} value={category} className="mt-4">
-              <div className={`h-64 rounded-xl ${bgImages[category as keyof typeof bgImages]} relative mb-6`}>
-                {/* Placeholder for sticker scene */}
-                <div className="absolute inset-0 flex items-center justify-center text-white/70">
-                  <div className="text-center px-4">
-                    <p className="text-sm font-medium mb-2">Drag stickers here to create your scene!</p>
-                    <Info className="h-5 w-5 inline-block" />
-                  </div>
-                </div>
+              <div 
+                ref={category === selectedTab ? sceneRef : null}
+                className={`h-64 rounded-xl relative mb-6 overflow-hidden ${bgImages[category as keyof typeof bgImages]}`}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              >
+                {/* Layer visualization */}
+                {categoryStickers.map((sticker) => {
+                  const isActive = activeLayers[category]?.[sticker.id] || false;
+                  const layerStyle = layerPaths[category as keyof typeof layerPaths][sticker.id];
+                  
+                  return (
+                    <div 
+                      key={sticker.id}
+                      className={`absolute transition-opacity duration-300 w-full ${isActive ? 'opacity-70' : 'opacity-0'}`}
+                      style={{
+                        top: layerStyle.top,
+                        height: layerStyle.height,
+                        backgroundColor: layerStyle.color
+                      }}
+                    >
+                      {isActive && (
+                        <div className="absolute right-2 top-2 bg-white/80 px-2 py-1 rounded-md text-xs font-medium">
+                          {sticker.name}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
                 
-                {/* This is where the stickers would be positioned */}
+                {/* Placed stickers */}
+                {placedStickers[category].map((sticker, index) => (
+                  <div 
+                    key={`${sticker.id}-${index}`}
+                    className="absolute text-2xl"
+                    style={{ 
+                      left: `${sticker.x}%`, 
+                      top: `${sticker.y}%`, 
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 20
+                    }}
+                  >
+                    {sticker.image}
+                  </div>
+                ))}
+                
+                {/* Empty state */}
+                {placedStickers[category].length === 0 && !activeLayers[category] && (
+                  <div className="absolute inset-0 flex items-center justify-center text-white/70">
+                    <div className="text-center px-4">
+                      <p className="text-sm font-medium mb-2">Drag stickers here to create your scene!</p>
+                      <Info className="h-5 w-5 inline-block" />
+                    </div>
+                  </div>
+                )}
               </div>
               
               <h3 className="text-lg font-medium mb-4">Available Stickers</h3>
@@ -90,8 +220,17 @@ const Collection = () => {
                     key={sticker.id} 
                     className={`sticker-item ${!sticker.unlocked ? 'opacity-50' : ''}`}
                     onClick={() => sticker.unlocked && handleStickerClick(sticker.id)}
+                    draggable={sticker.unlocked}
+                    onDragStart={(e) => sticker.unlocked && handleDragStart(e, sticker.id, sticker.image)}
+                    onDragEnd={handleDragEnd}
                   >
-                    <div className={`aspect-square rounded-lg flex items-center justify-center border ${selectedSticker === sticker.id ? 'border-primary' : 'border-border'} bg-card text-4xl`}>
+                    <div className={`aspect-square rounded-lg flex items-center justify-center border ${
+                      draggedSticker === sticker.id 
+                        ? 'border-accent' 
+                        : selectedSticker === sticker.id 
+                          ? 'border-primary' 
+                          : 'border-border'
+                    } bg-card text-4xl ${sticker.unlocked ? 'cursor-grab active:cursor-grabbing' : ''}`}>
                       {sticker.image}
                       {!sticker.unlocked && (
                         <div className="absolute inset-0 bg-background/50 rounded-lg flex items-center justify-center">
