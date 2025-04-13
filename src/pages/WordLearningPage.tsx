@@ -271,6 +271,25 @@ const WordLearningPage = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
+  const generateImageForSentence = (sentenceIndex: number) => {
+    setIsGeneratingImage(true);
+    
+    setTimeout(() => {
+      const placeholderImages: Record<string, string> = {
+        'crust': 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5',
+        'mantle': 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb',
+        'core': 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843',
+        'erupt': 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21',
+        'magma': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb'
+      };
+      
+      const imageUrl = placeholderImages[wordInfo?.word || ''] || 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5';
+      
+      setGeneratedImage(imageUrl);
+      setIsGeneratingImage(false);
+    }, 1500);
+  };
+
   useEffect(() => {
     if (wordId && wordLearningData[wordId as keyof typeof wordLearningData]) {
       setWordInfo(wordLearningData[wordId as keyof typeof wordLearningData]);
@@ -356,25 +375,6 @@ const WordLearningPage = () => {
     } else {
       navigate("/");
     }
-  };
-
-  const generateImageForSentence = (sentenceIndex: number) => {
-    setIsGeneratingImage(true);
-    
-    setTimeout(() => {
-      const placeholderImages: Record<string, string> = {
-        'crust': 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5',
-        'mantle': 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb',
-        'core': 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843',
-        'erupt': 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21',
-        'magma': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb'
-      };
-      
-      const imageUrl = placeholderImages[wordInfo.word] || 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5';
-      
-      setGeneratedImage(imageUrl);
-      setIsGeneratingImage(false);
-    }, 1500);
   };
 
   const renderStageContent = () => {
