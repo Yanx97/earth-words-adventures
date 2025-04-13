@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNavigation from "@/components/layout/BottomNavigation";
@@ -15,7 +14,8 @@ const mockLevels = [
     progress: 3,
     total: 10,
     words: ["crust", "mantle", "core"],
-    image: "🌍"
+    image: "🌍",
+    route: "/earth-layers"
   },
   {
     id: "volcanoes",
@@ -72,10 +72,15 @@ const Index = () => {
     setSelectedWord(idx === selectedWord ? null : idx);
   };
 
-  const handleLevelClick = (levelId: string) => {
-    // Find first word in the level to navigate to
-    const level = mockLevels.find(l => l.id === levelId);
-    if (level && !level.locked && level.words.length > 0) {
+  const handleLevelClick = (level: typeof mockLevels[0]) => {
+    if (level.locked) return;
+    
+    // If it has a specific route, navigate to it
+    if (level.route) {
+      navigate(level.route);
+    }
+    // Otherwise find first word in the level to navigate to
+    else if (level.words.length > 0) {
       navigate(`/learn/${level.words[0]}`);
     }
   };
@@ -106,7 +111,7 @@ const Index = () => {
               key={level.id} 
               className={`relative overflow-hidden ${level.locked ? 'opacity-70' : ''}`}
             >
-              <div className="p-4 flex items-center">
+              <div className="p-4 flex items-center cursor-pointer" onClick={() => handleLevelClick(level)}>
                 <div className="text-4xl mr-4">{level.image}</div>
                 <div className="flex-1">
                   <h3 className="font-bold">{level.title}</h3>
@@ -125,7 +130,6 @@ const Index = () => {
                   variant="ghost"
                   className="ml-2"
                   disabled={level.locked}
-                  onClick={() => handleLevelClick(level.id)}
                 >
                   <ChevronRight className="h-5 w-5" />
                 </Button>

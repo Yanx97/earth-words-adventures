@@ -4,6 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { wordLearningData } from "@/data/wordLearningData";
 import { pronunciationService } from "@/services/pronunciationService";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 // Component imports
 import LearningHeader from "@/components/learning/LearningHeader";
@@ -27,19 +29,56 @@ const WordLearningPage = () => {
     }
   }, [wordId, navigate]);
 
+  // Mark word as completed when user reaches the last stage
+  useEffect(() => {
+    if (currentStage === 3 && wordId) {
+      // Get existing completed words
+      const existingCompleted = localStorage.getItem('completedEarthLayersWords');
+      let completedWords: string[] = existingCompleted ? JSON.parse(existingCompleted) : [];
+      
+      // Add current word if not already in the list
+      if (!completedWords.includes(wordId)) {
+        completedWords.push(wordId);
+        localStorage.setItem('completedEarthLayersWords', JSON.stringify(completedWords));
+      }
+    }
+  }, [currentStage, wordId]);
+
   if (!wordInfo) return <div>Loading...</div>;
 
   const handleNextStage = () => {
     if (currentStage < wordInfo.stages.length - 1) {
       setCurrentStage(currentStage + 1);
     } else {
-      navigate("/");
+      // Check if we're coming from the earth-layers page
+      const referer = document.referrer;
+      if (referer.includes('earth-layers')) {
+        navigate("/earth-layers");
+      } else {
+        navigate("/");
+      }
     }
   };
 
   const handlePrevStage = () => {
     if (currentStage > 0) {
       setCurrentStage(currentStage - 1);
+    } else {
+      // Check if we're coming from the earth-layers page
+      const referer = document.referrer;
+      if (referer.includes('earth-layers')) {
+        navigate("/earth-layers");
+      } else {
+        navigate("/");
+      }
+    }
+  };
+
+  const handleExitLearning = () => {
+    // Check if we're coming from the earth-layers page
+    const referer = document.referrer;
+    if (referer.includes('earth-layers')) {
+      navigate("/earth-layers");
     } else {
       navigate("/");
     }
@@ -62,6 +101,19 @@ const WordLearningPage = () => {
 
   return (
     <div className="pb-20">
+      {/* Exit button */}
+      <div className="fixed top-3 right-3 z-40">
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="rounded-full" 
+          onClick={handleExitLearning}
+        >
+          <X className="h-4 w-4 mr-1" />
+          Exit
+        </Button>
+      </div>
+      
       <LearningHeader 
         word={wordInfo.word}
         currentStage={currentStage}

@@ -218,5 +218,52 @@ export const wordLearningData: Record<string, WordData> = {
       "When magma reaches the surface, it becomes lava.",
       "The composition of magma affects the type of eruption."
     ]
+  },
+  "volcano": {
+    word: "volcano",
+    translation: "火山",
+    partOfSpeech: "noun",
+    phonetic: "/vɒlˈkeɪnoʊ/",
+    meaning: "A mountain or hill with a crater or vent through which lava, rock fragments, hot vapor, and gas are or have been erupted from the earth's crust.",
+    example: "Mount Vesuvius is an active volcano.",
+    imageUrl: "🌋",
+    stages: [
+      {
+        title: "Recognition",
+        description: "Learn the meaning and pronunciation",
+      },
+      {
+        title: "Understanding",
+        description: "Understand the word in context",
+      },
+      {
+        title: "Practice",
+        description: "Practice using the word",
+      },
+      {
+        title: "Mastery",
+        description: "Master complex expressions",
+      }
+    ],
+    relatedWords: ["erupt", "lava", "magma"],
+    sentences: [
+      "There are over 1,500 active volcanoes worldwide.",
+      "The volcano has been dormant for centuries.",
+      "Living near an active volcano can be dangerous."
+    ],
+    mediaExamples: [
+      {
+        type: "video",
+        source: "National Geographic",
+        description: "Eruption footage from Kilauea",
+        url: "https://example.com/volcano-video"
+      },
+      {
+        type: "audio",
+        source: "Volcanic Activity Podcast",
+        description: "Episode on Famous Eruptions",
+        url: "https://example.com/volcano-podcast"
+      }
+    ]
   }
 };
