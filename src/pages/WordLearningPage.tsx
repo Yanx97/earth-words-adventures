@@ -1,16 +1,14 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Volume2, Mic, Check, AlertCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Volume2, Mic, Check, AlertCircle, Film, Music, ImageIcon } from "lucide-react";
 import { pronunciationService } from "@/services/pronunciationService";
 import { Progress } from "@/components/ui/progress";
 import WordCard from "@/components/WordCard";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
-// Mock data for the word learning
 const wordLearningData = {
   "crust": {
     word: "crust",
@@ -43,6 +41,20 @@ const wordLearningData = {
       "The Earth's crust varies in thickness.",
       "Continental crust is thicker than oceanic crust.",
       "Earthquakes occur when there's movement in the crust."
+    ],
+    mediaExamples: [
+      {
+        type: "video",
+        source: "National Geographic",
+        description: "Clip from 'Inside Earth' documentary",
+        url: "https://example.com/earth-crust-video"
+      },
+      {
+        type: "audio",
+        source: "Earth Science Audiobook",
+        description: "Chapter on Earth's Structure",
+        url: "https://example.com/earth-layers-audio"
+      }
     ]
   },
   "mantle": {
@@ -76,6 +88,20 @@ const wordLearningData = {
       "The mantle is mostly solid rock.",
       "Heat from the mantle causes plate movement.",
       "Scientists study the mantle to understand Earth's formation."
+    ],
+    mediaExamples: [
+      {
+        type: "video",
+        source: "Discovery Channel",
+        description: "From 'Planet Earth' series",
+        url: "https://example.com/earth-mantle-video"
+      },
+      {
+        type: "audio",
+        source: "Geology Podcast",
+        description: "Episode on Earth's Interior",
+        url: "https://example.com/mantle-podcast"
+      }
     ]
   },
   "core": {
@@ -241,12 +267,15 @@ const WordLearningPage = () => {
     text: string;
     accuracy: Record<string, boolean>;
   }>(null);
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   useEffect(() => {
     if (wordId && wordLearningData[wordId as keyof typeof wordLearningData]) {
       setWordInfo(wordLearningData[wordId as keyof typeof wordLearningData]);
+      generateImageForSentence(0);
     } else {
-      // Handle non-existent word
       navigate("/");
     }
   }, [wordId, navigate]);
@@ -265,13 +294,11 @@ const WordLearningPage = () => {
     if (isPlaying) return;
     
     setIsPlaying(true);
-    // Using the browser's built-in speech synthesis
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(sentence);
       utterance.lang = 'en-US';
-      utterance.rate = 0.9; // Slightly slower for clarity
+      utterance.rate = 0.9;
       
-      // Add an event listener to track when speech has finished
       utterance.onend = () => {
         setIsPlaying(false);
       };
@@ -285,28 +312,23 @@ const WordLearningPage = () => {
   const handleWordClick = (word: string) => {
     setHighlightedWord(word === highlightedWord ? null : word);
     
-    // Play the pronunciation of the clicked word
     if (word !== highlightedWord) {
       pronunciationService.playAudio(word);
     }
   };
 
   const handleMicClick = () => {
-    // Mock speech recognition for now
     setIsRecording(true);
     
-    // Simulate speech recognition after 2 seconds
     setTimeout(() => {
       setIsRecording(false);
       
-      // Simulate a result
       const exampleSentence = wordInfo.sentences[0];
       const words = exampleSentence.toLowerCase().split(/\s+/).map(w => w.replace(/[,.!?;:]/g, ""));
       
-      // Simulate some accuracy results
       const accuracy: Record<string, boolean> = {};
       words.forEach(word => {
-        accuracy[word] = Math.random() > 0.2; // 80% chance of being correct
+        accuracy[word] = Math.random() > 0.2;
       });
       
       setSpeechResult({
@@ -322,7 +344,6 @@ const WordLearningPage = () => {
       setSpeechResult(null);
       setHighlightedWord(null);
     } else {
-      // Return to learning path
       navigate("/");
     }
   };
@@ -333,9 +354,27 @@ const WordLearningPage = () => {
       setSpeechResult(null);
       setHighlightedWord(null);
     } else {
-      // Return to learning path
       navigate("/");
     }
+  };
+
+  const generateImageForSentence = (sentenceIndex: number) => {
+    setIsGeneratingImage(true);
+    
+    setTimeout(() => {
+      const placeholderImages: Record<string, string> = {
+        'crust': 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5',
+        'mantle': 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb',
+        'core': 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843',
+        'erupt': 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21',
+        'magma': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb'
+      };
+      
+      const imageUrl = placeholderImages[wordInfo.word] || 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5';
+      
+      setGeneratedImage(imageUrl);
+      setIsGeneratingImage(false);
+    }, 1500);
   };
 
   const renderStageContent = () => {
@@ -377,7 +416,7 @@ const WordLearningPage = () => {
                 {wordInfo.relatedWords.map((relWord: string) => (
                   <div 
                     key={relWord} 
-                    className="px-3 py-1 bg-background rounded-full text-sm border"
+                    className="px-3 py-1 bg-background rounded-full text-sm border cursor-pointer"
                     onClick={() => navigate(`/learn/${relWord}`)}
                   >
                     {relWord}
@@ -392,6 +431,100 @@ const WordLearningPage = () => {
         return (
           <div className="space-y-4">
             <h2 className="text-xl font-bold mb-4">Understanding "{wordInfo.word}" in Context</h2>
+            
+            {wordInfo.mediaExamples && wordInfo.mediaExamples.length > 0 && (
+              <Card className="mb-6">
+                <div className="p-4">
+                  <h3 className="font-medium mb-3">Media Examples</h3>
+                  
+                  <div className="flex gap-2 mb-4">
+                    {wordInfo.mediaExamples.map((media: any, idx: number) => (
+                      <Button
+                        key={idx}
+                        variant={selectedMediaIndex === idx ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedMediaIndex(idx)}
+                      >
+                        {media.type === "video" ? <Film className="h-4 w-4 mr-1" /> : <Music className="h-4 w-4 mr-1" />}
+                        {media.type === "video" ? "Video" : "Audio"}
+                      </Button>
+                    ))}
+                  </div>
+                  
+                  <div className="bg-muted rounded-lg p-4 mb-2">
+                    <div className="flex items-center text-sm mb-2">
+                      {wordInfo.mediaExamples[selectedMediaIndex].type === "video" ? (
+                        <Film className="h-4 w-4 mr-2 text-primary" />
+                      ) : (
+                        <Music className="h-4 w-4 mr-2 text-primary" />
+                      )}
+                      <span className="font-medium">
+                        {wordInfo.mediaExamples[selectedMediaIndex].description}
+                      </span>
+                    </div>
+                    
+                    <div className="bg-gray-800 h-40 rounded flex items-center justify-center text-white">
+                      {wordInfo.mediaExamples[selectedMediaIndex].type === "video" ? (
+                        <div className="text-center">
+                          <Film className="h-10 w-10 mx-auto mb-2" />
+                          <div>Video Player Placeholder</div>
+                        </div>
+                      ) : (
+                        <div className="text-center">
+                          <Music className="h-10 w-10 mx-auto mb-2" />
+                          <div>Audio Player Placeholder</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="text-xs text-muted-foreground">
+                    Source: {wordInfo.mediaExamples[selectedMediaIndex].source}
+                  </div>
+                </div>
+              </Card>
+            )}
+            
+            <div className="bg-muted/30 rounded-lg p-4 mb-6">
+              <h3 className="font-medium mb-3">Visualization</h3>
+              
+              <div className="mb-4">
+                <p className="text-sm mb-2">{wordInfo.sentences[0]}</p>
+                
+                {isGeneratingImage ? (
+                  <div className="bg-gray-100 h-60 rounded-md flex items-center justify-center animate-pulse">
+                    <div className="text-center">
+                      <ImageIcon className="h-10 w-10 mx-auto mb-2 text-muted-foreground" />
+                      <div className="text-muted-foreground">Generating image...</div>
+                    </div>
+                  </div>
+                ) : generatedImage ? (
+                  <div className="relative">
+                    <img 
+                      src={generatedImage} 
+                      alt={`Visualization of: ${wordInfo.sentences[0]}`}
+                      className="w-full h-60 object-cover rounded-md"
+                    />
+                    <div className="absolute bottom-2 right-2 bg-background/80 px-2 py-1 rounded text-xs">
+                      AI-generated visualization
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+              
+              {!isGeneratingImage && (
+                <div className="flex justify-end">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => generateImageForSentence(0)}
+                    className="text-xs"
+                  >
+                    <ImageIcon className="h-3 w-3 mr-1" /> Regenerate Image
+                  </Button>
+                </div>
+              )}
+            </div>
             
             <div className="mb-6">
               {wordInfo.sentences.map((sentence: string, idx: number) => (
@@ -559,7 +692,6 @@ const WordLearningPage = () => {
 
   return (
     <div className="pb-20">
-      {/* Top header */}
       <div className="sticky top-0 z-30 flex items-center justify-between bg-background/80 backdrop-blur-sm px-4 py-3 border-b">
         <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
           <ChevronLeft className="h-5 w-5" />
@@ -572,7 +704,6 @@ const WordLearningPage = () => {
         </div>
       </div>
 
-      {/* Progress bar */}
       <div className="w-full h-1 bg-muted">
         <div 
           className="h-full bg-primary transition-all" 
@@ -580,9 +711,7 @@ const WordLearningPage = () => {
         ></div>
       </div>
 
-      {/* Main content */}
       <div className="container max-w-md mx-auto px-4 py-6">
-        {/* Stage tabs */}
         <Tabs 
           value={String(currentStage)} 
           className="mb-6"
@@ -590,20 +719,22 @@ const WordLearningPage = () => {
         >
           <TabsList className="w-full">
             {wordInfo.stages.map((stage: any, idx: number) => (
-              <TabsTrigger key={idx} value={String(idx)} disabled={idx > currentStage} className="flex-1 text-xs">
+              <TabsTrigger key={idx} value={String(idx)} className="flex-1 text-xs">
                 {stage.title}
               </TabsTrigger>
             ))}
           </TabsList>
+          
+          {wordInfo.stages.map((stage: any, idx: number) => (
+            <TabsContent key={idx} value={String(idx)} className="hidden">
+              <div className="space-y-6">
+                {renderStageContent()}
+              </div>
+            </TabsContent>
+          ))}
         </Tabs>
-        
-        {/* Stage content */}
-        <div className="space-y-6">
-          {renderStageContent()}
-        </div>
       </div>
 
-      {/* Navigation buttons */}
       <div className="fixed bottom-16 left-0 right-0 flex justify-between px-4 py-3 bg-background/80 backdrop-blur-sm border-t">
         <Button 
           variant="outline"
