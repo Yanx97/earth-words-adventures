@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,12 +8,10 @@ import VocabCard from "@/components/learning/VocabCard";
 import { useToast } from "@/hooks/use-toast";
 import confetti from "canvas-confetti";
 
-// Helper function to check if all words in a category are completed
 const areAllWordsCompleted = (words: string[], completedWords: string[]): boolean => {
   return words.every(word => completedWords.includes(word));
 };
 
-// Quiz component
 const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onClose: () => void }) => {
   const [score, setScore] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -30,15 +27,12 @@ const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onCl
   };
 
   const handleSubmit = () => {
-    // Calculate score
     let newScore = 0;
     
-    // Check matching answers
     answers.matching.forEach((answer, index) => {
       if (answer === correctAnswers.matching[index]) newScore++;
     });
     
-    // Check fill-in-the-blanks
     answers.fillBlanks.forEach((answer, index) => {
       if (answer.toLowerCase() === correctAnswers.fillBlanks[index]) newScore++;
     });
@@ -46,7 +40,6 @@ const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onCl
     setScore(newScore);
     setIsSubmitted(true);
     
-    // If all answers are correct, show confetti and call onComplete
     if (newScore === 6) {
       confetti({
         particleCount: 100,
@@ -54,14 +47,13 @@ const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onCl
         origin: { y: 0.6 }
       });
       
-      // Play success sound
       const audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3");
       audio.play();
       
       toast({
         title: "Congratulations!",
         description: "You've completed the Earth Layers quiz!",
-        variant: "success"
+        variant: "default"
       });
       
       onComplete();
@@ -97,7 +89,6 @@ const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onCl
         <CardDescription>Test your knowledge of Earth Layers vocabulary</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Matching section */}
         <div>
           <h3 className="font-medium mb-3">Match English words with Chinese translations:</h3>
           <div className="space-y-3">
@@ -161,7 +152,6 @@ const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onCl
           </div>
         </div>
 
-        {/* Fill-in-the-blanks section */}
         <div>
           <h3 className="font-medium mb-3">Fill in the blanks with the correct form:</h3>
           <div className="space-y-4">
@@ -237,10 +227,8 @@ const EarthLayersPage = () => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
 
-  // Earth layers words
   const earthLayersWords = ["crust", "mantle", "core", "erupt", "magma", "volcano"];
 
-  // Load completed words from localStorage
   useEffect(() => {
     const savedCompletedWords = localStorage.getItem('completedEarthLayersWords');
     if (savedCompletedWords) {
@@ -253,12 +241,10 @@ const EarthLayersPage = () => {
     }
   }, []);
 
-  // Save completed words to localStorage when updated
   useEffect(() => {
     localStorage.setItem('completedEarthLayersWords', JSON.stringify(completedWords));
   }, [completedWords]);
 
-  // Mark a word as completed
   const markWordAsCompleted = (word: string) => {
     if (!completedWords.includes(word)) {
       const updatedCompletedWords = [...completedWords, word];
@@ -266,7 +252,6 @@ const EarthLayersPage = () => {
     }
   };
 
-  // Check if quiz is available (all words completed)
   const isQuizAvailable = areAllWordsCompleted(earthLayersWords, completedWords);
 
   const handleTakeQuiz = () => {
@@ -284,7 +269,6 @@ const EarthLayersPage = () => {
 
   return (
     <div className="pb-20">
-      {/* Top header */}
       <div className="sticky top-0 z-30 flex items-center justify-between bg-background/80 backdrop-blur-sm px-4 py-3 border-b">
         <Button variant="ghost" size="icon" onClick={handleGoBack}>
           <ChevronLeft className="h-5 w-5" />
@@ -297,7 +281,6 @@ const EarthLayersPage = () => {
         </div>
       </div>
 
-      {/* Progress bar */}
       <div className="w-full h-1 bg-muted">
         <div 
           className="h-full bg-primary transition-all" 
@@ -305,7 +288,6 @@ const EarthLayersPage = () => {
         ></div>
       </div>
 
-      {/* Main content */}
       <div className="container max-w-md mx-auto px-4 py-6">
         {showQuiz ? (
           <EarthLayersQuiz 
