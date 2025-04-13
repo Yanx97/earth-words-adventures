@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { wordLearningData } from "@/data/wordLearningData";
-import { pronunciationService } from "@/services/pronunciationService";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -50,13 +49,8 @@ const WordLearningPage = () => {
     if (currentStage < wordInfo.stages.length - 1) {
       setCurrentStage(currentStage + 1);
     } else {
-      // Check if we're coming from the earth-layers page
-      const referer = document.referrer;
-      if (referer.includes('earth-layers')) {
-        navigate("/earth-layers");
-      } else {
-        navigate("/");
-      }
+      // Always navigate back to the earth-layers page when finished
+      navigate("/earth-layers");
     }
   };
 
@@ -64,24 +58,13 @@ const WordLearningPage = () => {
     if (currentStage > 0) {
       setCurrentStage(currentStage - 1);
     } else {
-      // Check if we're coming from the earth-layers page
-      const referer = document.referrer;
-      if (referer.includes('earth-layers')) {
-        navigate("/earth-layers");
-      } else {
-        navigate("/");
-      }
+      navigate("/earth-layers");
     }
   };
 
   const handleExitLearning = () => {
-    // Check if we're coming from the earth-layers page
-    const referer = document.referrer;
-    if (referer.includes('earth-layers')) {
-      navigate("/earth-layers");
-    } else {
-      navigate("/");
-    }
+    // Always navigate back to the earth-layers page
+    navigate("/earth-layers");
   };
 
   const renderStageContent = () => {
