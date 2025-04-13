@@ -12,19 +12,31 @@ const ImageGenerator = ({ sentence, word }: ImageGeneratorProps) => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
+  // Generate a better prompt based on the sentence and word
+  const generatePrompt = (sentence: string, word: string) => {
+    // Focus on visualizing the word in the context of the sentence
+    return `Realistic visualization of "${sentence}" with focus on the concept of "${word}"`;
+  };
+
   const generateImageForSentence = () => {
     setIsGeneratingImage(true);
     
+    // Simulate API call with timeout
     setTimeout(() => {
       const placeholderImages: Record<string, string> = {
         'crust': 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5',
         'mantle': 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb',
         'core': 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843',
         'erupt': 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21',
-        'magma': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb'
+        'magma': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+        'earth': 'https://images.unsplash.com/photo-1498050108023-c5249f4df085',
+        'layer': 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7',
+        'thicker': 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843',
+        'continental': 'https://images.unsplash.com/photo-1500673922987-e212871fec22',
+        'oceanic': 'https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b',
       };
       
-      const imageUrl = placeholderImages[word || ''] || 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5';
+      const imageUrl = placeholderImages[word.toLowerCase()] || placeholderImages['earth'];
       
       setGeneratedImage(imageUrl);
       setIsGeneratingImage(false);
@@ -32,8 +44,10 @@ const ImageGenerator = ({ sentence, word }: ImageGeneratorProps) => {
   };
 
   React.useEffect(() => {
-    generateImageForSentence();
-  }, [word]);
+    if (sentence && word) {
+      generateImageForSentence();
+    }
+  }, [sentence, word]);
 
   return (
     <div className="mb-4">
@@ -50,7 +64,7 @@ const ImageGenerator = ({ sentence, word }: ImageGeneratorProps) => {
         <div className="relative">
           <img 
             src={generatedImage} 
-            alt={`Visualization of: ${sentence}`}
+            alt={`Visualization of: ${generatePrompt(sentence, word)}`}
             className="w-full h-60 object-cover rounded-md"
           />
           <div className="absolute bottom-2 right-2 bg-background/80 px-2 py-1 rounded text-xs">
