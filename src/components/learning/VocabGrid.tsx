@@ -11,6 +11,9 @@ interface VocabGridProps {
 }
 
 const VocabGrid = ({ words, completedWords }: VocabGridProps) => {
+  // Calculate the total number of questions across all sections
+  const totalQuestions = quizSections.flatMap(section => section.questions).length;
+  
   return (
     <div className="grid grid-cols-2 gap-4 mb-8">
       {words.map(word => {
@@ -26,7 +29,7 @@ const VocabGrid = ({ words, completedWords }: VocabGridProps) => {
         ) : null;
       })}
       <QuizCard 
-        totalQuestions={quizSections.flatMap(section => section.questions).length}
+        totalQuestions={totalQuestions}
         completedQuestions={0}
       />
     </div>
