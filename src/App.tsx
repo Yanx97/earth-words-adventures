@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -13,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import WordLearningPage from "./pages/WordLearningPage";
 import EarthLayersPage from "./pages/EarthLayersPage";
 import EarthGeographyPage from "./pages/EarthGeographyPage";
+import EarthLayersQuizPage from "./pages/EarthLayersQuizPage";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -31,6 +31,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/learn/:wordId" element={<WordLearningPage />} />
             <Route path="/earth-layers" element={<EarthLayersPage />} />
+            <Route path="/earth-layers/quiz" element={<EarthLayersQuizPage />} />
             <Route path="/earth-geography" element={<EarthGeographyPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

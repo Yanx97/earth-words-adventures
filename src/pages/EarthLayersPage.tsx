@@ -14,12 +14,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { pronunciationService } from "@/services/pronunciationService";
 import { Progress } from "@/components/ui/progress";
+import QuizCard from "@/components/learning/QuizCard";
 
 const areAllWordsCompleted = (words: string[], completedWords: string[]): boolean => {
   return words.every(word => completedWords.includes(word));
 };
 
-// Update the QuizQuestion interface
 interface QuizQuestion {
   id: number;
   type: "multiple-choice" | "sentence-selection" | "grammar" | "fill-blank" | "relative-clause" | "speaking" | "writing";
@@ -30,7 +30,6 @@ interface QuizQuestion {
   relatedWord: string;
 }
 
-// Update quiz sections with correct type annotations
 const quizSections = [
   {
     title: "Part 1: Basic Recognition",
@@ -243,80 +242,14 @@ const EarthLayersPage = () => {
               />
             ) : null;
           })}
+          <QuizCard 
+            totalQuestions={quizSections.flatMap(section => section.questions).length}
+            completedQuestions={0}
+          />
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Test Your Knowledge</CardTitle>
-            <CardDescription>Complete the following quiz to test your understanding.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {quizSections.map((section, index) => (
-              <div key={index} className="mb-4">
-                <h3 className="text-lg font-semibold mb-2">{section.title}</h3>
-                <p className="text-sm text-muted-foreground">{section.description}</p>
-                {section.questions.map(question => (
-                  <div key={question.id} className="mb-2">
-                    <p className="font-medium">{question.question}</p>
-                    {question.type === "multiple-choice" && question.options && (
-                      <RadioGroup>
-                        {question.options.map((option, optionIndex) => (
-                          <div key={optionIndex} className="flex items-center space-x-2">
-                            <RadioGroupItem value={String(optionIndex)} id={`question-${question.id}-option-${optionIndex}`} />
-                            <Label htmlFor={`question-${question.id}-option-${optionIndex}`}>{option}</Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    )}
-                    {question.type === "sentence-selection" && question.options && (
-                      <RadioGroup>
-                        {question.options.map((option, optionIndex) => (
-                          <div key={optionIndex} className="flex items-center space-x-2">
-                            <RadioGroupItem value={String(optionIndex)} id={`question-${question.id}-option-${optionIndex}`} />
-                            <Label htmlFor={`question-${question.id}-option-${optionIndex}`}>{option}</Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    )}
-                    {question.type === "grammar" && question.options && (
-                      <RadioGroup>
-                        {question.options.map((option, optionIndex) => (
-                          <div key={optionIndex} className="flex items-center space-x-2">
-                            <RadioGroupItem value={String(optionIndex)} id={`question-${question.id}-option-${optionIndex}`} />
-                            <Label htmlFor={`question-${question.id}-option-${optionIndex}`}>{option}</Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    )}
-                    {question.type === "fill-blank" && (
-                      <Input type="text" placeholder="Your answer" />
-                    )}
-                    {question.type === "relative-clause" && question.options && (
-                      <RadioGroup>
-                        {question.options.map((option, optionIndex) => (
-                          <div key={optionIndex} className="flex items-center space-x-2">
-                            <RadioGroupItem value={String(optionIndex)} id={`question-${question.id}-option-${optionIndex}`} />
-                            <Label htmlFor={`question-${question.id}-option-${optionIndex}`}>{option}</Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    )}
-                    {question.type === "speaking" && (
-                      <Button>Record Answer</Button>
-                    )}
-                    {question.type === "writing" && (
-                      <Textarea placeholder="Write your answer here" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
 };
 
-// Add the default export
 export default EarthLayersPage;
