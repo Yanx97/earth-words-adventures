@@ -161,4 +161,162 @@ const quizSections = [
   }
 ];
 
-// ... keep existing code (rest of the file)
+const EarthLayersPage = () => {
+  const navigate = useNavigate();
+  const [completedWords, setCompletedWords] = useState<string[]>([]);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const { toast } = useToast();
+
+  const earthLayerWords = ["crust", "mantle", "core", "magma", "tectonic plates", "volcano", "erupt"];
+
+  useEffect(() => {
+    const savedCompletedWords = localStorage.getItem('completedEarthLayersWords');
+    if (savedCompletedWords) {
+      setCompletedWords(JSON.parse(savedCompletedWords));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('completedEarthLayersWords', JSON.stringify(completedWords));
+    if (areAllWordsCompleted(earthLayerWords, completedWords) && !showConfetti) {
+      setShowConfetti(true);
+      confetti({
+        particleCount: 200,
+        spread: 160,
+        origin: { y: 0.6 }
+      });
+      toast({
+        title: "Congratulations!",
+        description: "You've completed all the words in this section!",
+        className: "bg-green-500 text-white",
+        duration: 5000,
+      });
+    }
+  }, [completedWords, showConfetti, toast]);
+
+  const handleGoBack = () => {
+    navigate('/');
+  };
+
+  return (
+    <div className="pb-20">
+      <div className="sticky top-0 z-30 flex items-center justify-between bg-background/80 backdrop-blur-sm px-4 py-3 border-b">
+        <Button variant="ghost" size="icon" onClick={handleGoBack}>
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
+        <div className="text-sm font-medium">Earth Layers Learning Path</div>
+        <div className="flex items-center space-x-2">
+          <div className="bg-secondary/80 px-2 py-1 rounded-full text-xs">
+            {completedWords.length}/{earthLayerWords.length} Completed
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full h-1 bg-muted">
+        <div
+          className="h-full bg-primary transition-all"
+          style={{ width: `${(completedWords.length / earthLayerWords.length) * 100}%` }}
+        ></div>
+      </div>
+
+      <div className="container max-w-md mx-auto px-4 py-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Earth Layers Vocabulary</h1>
+          {areAllWordsCompleted(earthLayerWords, completedWords) && (
+            <div className="flex items-center space-x-2 text-green-500">
+              <CheckCircle2 className="h-5 w-5" />
+              <span>Completed!</span>
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          {earthLayerWords.map(word => {
+            const wordData = wordLearningData[word];
+            return wordData ? (
+              <VocabCard
+                key={word}
+                word={word}
+                imageUrl={wordData.imageUrl}
+                translation={wordData.translation}
+                isCompleted={completedWords.includes(word)}
+              />
+            ) : null;
+          })}
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Test Your Knowledge</CardTitle>
+            <CardDescription>Complete the following quiz to test your understanding.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {quizSections.map((section, index) => (
+              <div key={index} className="mb-4">
+                <h3 className="text-lg font-semibold mb-2">{section.title}</h3>
+                <p className="text-sm text-muted-foreground">{section.description}</p>
+                {section.questions.map(question => (
+                  <div key={question.id} className="mb-2">
+                    <p className="font-medium">{question.question}</p>
+                    {question.type === "multiple-choice" && question.options && (
+                      <RadioGroup>
+                        {question.options.map((option, optionIndex) => (
+                          <div key={optionIndex} className="flex items-center space-x-2">
+                            <RadioGroupItem value={String(optionIndex)} id={`question-${question.id}-option-${optionIndex}`} />
+                            <Label htmlFor={`question-${question.id}-option-${optionIndex}`}>{option}</Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
+                    {question.type === "sentence-selection" && question.options && (
+                      <RadioGroup>
+                        {question.options.map((option, optionIndex) => (
+                          <div key={optionIndex} className="flex items-center space-x-2">
+                            <RadioGroupItem value={String(optionIndex)} id={`question-${question.id}-option-${optionIndex}`} />
+                            <Label htmlFor={`question-${question.id}-option-${optionIndex}`}>{option}</Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
+                    {question.type === "grammar" && question.options && (
+                      <RadioGroup>
+                        {question.options.map((option, optionIndex) => (
+                          <div key={optionIndex} className="flex items-center space-x-2">
+                            <RadioGroupItem value={String(optionIndex)} id={`question-${question.id}-option-${optionIndex}`} />
+                            <Label htmlFor={`question-${question.id}-option-${optionIndex}`}>{option}</Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
+                    {question.type === "fill-blank" && (
+                      <Input type="text" placeholder="Your answer" />
+                    )}
+                    {question.type === "relative-clause" && question.options && (
+                      <RadioGroup>
+                        {question.options.map((option, optionIndex) => (
+                          <div key={optionIndex} className="flex items-center space-x-2">
+                            <RadioGroupItem value={String(optionIndex)} id={`question-${question.id}-option-${optionIndex}`} />
+                            <Label htmlFor={`question-${question.id}-option-${optionIndex}`}>{option}</Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
+                    {question.type === "speaking" && (
+                      <Button>Record Answer</Button>
+                    )}
+                    {question.type === "writing" && (
+                      <Textarea placeholder="Write your answer here" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+// Add the default export
+export default EarthLayersPage;
