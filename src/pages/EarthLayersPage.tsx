@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -30,6 +29,22 @@ interface QuizQuestion {
   explanation?: string;
   relatedWord: string;
 }
+
+// Type guard functions to check if properties exist
+const hasOptions = (question: QuizQuestion): boolean => {
+  return question.type === 'multiple-choice' || 
+         question.type === 'sentence-selection' || 
+         question.type === 'grammar' || 
+         question.type === 'relative-clause';
+};
+
+const hasCorrectAnswer = (question: QuizQuestion): boolean => {
+  return question.type === 'multiple-choice' || 
+         question.type === 'sentence-selection' || 
+         question.type === 'grammar' || 
+         question.type === 'fill-blank' || 
+         question.type === 'relative-clause';
+};
 
 const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onClose: () => void }) => {
   const [currentSection, setCurrentSection] = useState(0);
@@ -281,7 +296,8 @@ const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onCl
 
     let isCorrect = false;
 
-    if (currentQuestion.type !== "speaking" && currentQuestion.type !== "writing") {
+    if (hasCorrectAnswer(currentQuestion) && currentQuestion.type !== "speaking" && currentQuestion.type !== "writing") {
+      // Now we know correctAnswer exists on this question
       isCorrect = String(selectedAnswer) === String(currentQuestion.correctAnswer);
       
       if (isCorrect) {
@@ -367,11 +383,11 @@ const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onCl
             className="space-y-3"
             disabled={isAnswerSubmitted}
           >
-            {currentQuestion.options?.map((option, index) => (
+            {hasOptions(currentQuestion) && currentQuestion.options?.map((option, index) => (
               <div key={index} className={cn(
                 "flex items-center border rounded-md p-3 transition-colors",
-                isAnswerSubmitted && index === currentQuestion.correctAnswer && "bg-green-50 border-green-300",
-                isAnswerSubmitted && selectedAnswer === String(index) && index !== currentQuestion.correctAnswer && "bg-red-50 border-red-300",
+                isAnswerSubmitted && hasCorrectAnswer(currentQuestion) && index === currentQuestion.correctAnswer && "bg-green-50 border-green-300",
+                isAnswerSubmitted && selectedAnswer === String(index) && hasCorrectAnswer(currentQuestion) && index !== currentQuestion.correctAnswer && "bg-red-50 border-red-300",
                 !isAnswerSubmitted && "hover:bg-muted/50"
               )}>
                 <RadioGroupItem 
@@ -383,7 +399,7 @@ const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onCl
                 <Label htmlFor={`option-${index}`} className="flex-1 cursor-pointer">
                   {option}
                 </Label>
-                {isAnswerSubmitted && index === currentQuestion.correctAnswer && (
+                {isAnswerSubmitted && hasCorrectAnswer(currentQuestion) && index === currentQuestion.correctAnswer && (
                   <CheckCircle2 className="h-5 w-5 text-green-600 ml-2" />
                 )}
               </div>
@@ -401,20 +417,20 @@ const EarthLayersQuiz = ({ onComplete, onClose }: { onComplete: () => void, onCl
                 onChange={(e) => setSelectedAnswer(e.target.value)}
                 className={cn(
                   "w-32 inline",
-                  isAnswerSubmitted && selectedAnswer?.toLowerCase() === currentQuestion.correctAnswer?.toLowerCase() && "bg-green-50 border-green-500 text-green-700",
-                  isAnswerSubmitted && selectedAnswer?.toLowerCase() !== currentQuestion.correctAnswer?.toLowerCase() && "bg-red-50 border-red-500 text-red-700"
+                  isAnswerSubmitted && hasCorrectAnswer(currentQuestion) && selectedAnswer?.toLowerCase() === currentQuestion.correctAnswer?.toString().toLowerCase() && "bg-green-50 border-green-500 text-green-700",
+                  isAnswerSubmitted && hasCorrectAnswer(currentQuestion) && selectedAnswer?.toLowerCase() !== currentQuestion.correctAnswer?.toString().toLowerCase() && "bg-red-50 border-red-500 text-red-700"
                 )}
                 disabled={isAnswerSubmitted}
               />
               <span>{currentQuestion.question.split("______")[1] || ""}</span>
             </div>
-            {isAnswerSubmitted && (
+            {isAnswerSubmitted && hasCorrectAnswer(currentQuestion) && (
               <div className={cn(
                 "p-3 rounded",
-                selectedAnswer?.toLowerCase() === currentQuestion.correctAnswer?.toLowerCase() ? "bg-green-100" : "bg-red-100"
+                selectedAnswer?.toLowerCase() === currentQuestion.correctAnswer?.toString().toLowerCase() ? "bg-green-100" : "bg-red-100"
               )}>
                 <p>
-                  {selectedAnswer?.toLowerCase() === currentQuestion.correctAnswer?.toLowerCase()
+                  {selectedAnswer?.toLowerCase() === currentQuestion.correctAnswer?.toString().toLowerCase()
                     ? "Correct! "
                     : `Incorrect. The correct answer is "${currentQuestion.correctAnswer}". `}
                 </p>
