@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,7 +32,90 @@ const exampleWordDefinitions: Record<string, Record<string, string>> = {
     "earthquakes": "Sudden violent shaking of the ground due to movements within the earth's crust",
     "movement": "An act of changing physical location or position"
   },
-  // Add definitions for other words as needed
+  "mantle": {
+    "mantle": "The layer of the Earth between the crust and the core",
+    "extends": "Reaches or stretches out",
+    "beneath": "In a lower position than something else",
+    "solid": "Firm and stable in shape",
+    "rock": "The solid mineral material forming part of the Earth's surface"
+  },
+  "core": {
+    "core": "The central or most important part of something",
+    "center": "The middle point of something",
+    "earth": "Our planet",
+    "temperature": "A measure of how hot or cold something is",
+    "pressure": "The force produced when something presses against something else"
+  },
+  "volcano": {
+    "volcano": "A mountain that can erupt with lava, ash, and gases",
+    "active": "Currently doing something or able to do something",
+    "eruption": "A sudden burst of activity, especially from a volcano",
+    "lava": "Hot molten or liquid rock from a volcano",
+    "mountain": "A large natural elevation of the Earth's surface"
+  },
+  "magma": {
+    "magma": "Hot fluid or semi-fluid material below Earth's surface",
+    "molten": "Made liquid by heat",
+    "rock": "Solid mineral material",
+    "flows": "Moves steadily and continuously",
+    "underground": "Beneath the surface of the Earth"
+  },
+  "erupt": {
+    "erupt": "To burst out suddenly and violently",
+    "volcano": "A mountain that can release lava and gases",
+    "explosion": "A violent burst or release of energy",
+    "sudden": "Happening or coming unexpectedly",
+    "force": "Strength or power used against something"
+  },
+  "hydrosphere": {
+    "hydrosphere": "All the water on Earth's surface",
+    "water": "A clear liquid essential for life",
+    "oceans": "Large bodies of salt water",
+    "rivers": "Natural streams of water flowing in channels",
+    "cycle": "A series of events that repeat regularly"
+  },
+  "atmosphere": {
+    "atmosphere": "The layer of gases surrounding the Earth",
+    "air": "The invisible gaseous substance surrounding the Earth",
+    "gases": "Substances that are neither liquid nor solid",
+    "oxygen": "A gas essential for life",
+    "layer": "A sheet or level of material"
+  },
+  "lithosphere": {
+    "lithosphere": "The rigid outer layer of the Earth",
+    "solid": "Firm and stable in shape",
+    "surface": "The outside or uppermost layer",
+    "plates": "Large sections of the Earth's crust",
+    "rock": "The solid mineral material forming part of the Earth's surface"
+  },
+  "longitude": {
+    "longitude": "The distance east or west on the Earth's surface",
+    "coordinates": "Numbers that indicate position",
+    "position": "A particular location",
+    "lines": "Long thin marks or stripes",
+    "map": "A representation of an area"
+  },
+  "latitude": {
+    "latitude": "The distance north or south on the Earth's surface",
+    "equator": "An imaginary line around the middle of the Earth",
+    "degrees": "Units of measurement for angles and temperature",
+    "north": "The direction toward the North Pole",
+    "south": "The direction toward the South Pole"
+  },
+  "horizon": {
+    "horizon": "The line where the Earth's surface and the sky appear to meet",
+    "view": "The area that you can see",
+    "distance": "The amount of space between two things",
+    "sky": "The space above the Earth",
+    "visible": "Able to be seen"
+  },
+  "altitude": {
+    "altitude": "Height above sea level",
+    "height": "The measurement from base to top",
+    "level": "A position on a real or imaginary scale",
+    "measure": "To find the size, amount, or degree of something",
+    "elevation": "Height above a given level"
+  }
 };
 
 // Example sentence sources
