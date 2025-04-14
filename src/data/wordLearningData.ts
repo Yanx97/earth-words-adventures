@@ -1,4 +1,3 @@
-
 interface MediaExample {
   type: string;
   source: string;
@@ -264,6 +263,237 @@ export const wordLearningData: Record<string, WordData> = {
         description: "Episode on Famous Eruptions",
         url: "https://example.com/volcano-podcast"
       }
+    ]
+  },
+  "hydrosphere": {
+    word: "hydrosphere",
+    translation: "水圈",
+    partOfSpeech: "noun",
+    phonetic: "/ˈhaɪdrəˌsfɪər/",
+    meaning: "The total amount of water on a planet's surface and atmosphere.",
+    example: "The Earth's hydrosphere includes oceans, rivers, and clouds.",
+    imageUrl: "💧",
+    stages: [
+      {
+        title: "Recognition",
+        description: "Learn the meaning and pronunciation",
+      },
+      {
+        title: "Understanding",
+        description: "Understand the word in context",
+      },
+      {
+        title: "Practice",
+        description: "Practice using the word",
+      },
+      {
+        title: "Mastery",
+        description: "Master complex expressions",
+      }
+    ],
+    relatedWords: ["atmosphere", "lithosphere"],
+    sentences: [
+      "The hydrosphere plays a crucial role in Earth's climate.",
+      "Water cycles through the hydrosphere continuously.",
+      "The hydrosphere includes all forms of water on Earth."
+    ]
+  },
+  "atmosphere": {
+    word: "atmosphere",
+    translation: "大气层",
+    partOfSpeech: "noun",
+    phonetic: "/ˈætməˌsfɪər/",
+    meaning: "The layer of gases that surrounds the Earth or another planet.",
+    example: "The atmosphere protects life on Earth from harmful radiation.",
+    imageUrl: "🌫️",
+    stages: [
+      {
+        title: "Recognition",
+        description: "Learn the meaning and pronunciation",
+      },
+      {
+        title: "Understanding",
+        description: "Understand the word in context",
+      },
+      {
+        title: "Practice",
+        description: "Practice using the word",
+      },
+      {
+        title: "Mastery",
+        description: "Master complex expressions",
+      }
+    ],
+    relatedWords: ["hydrosphere", "oxygen"],
+    sentences: [
+      "The atmosphere contains different layers.",
+      "Plants help maintain oxygen in the atmosphere.",
+      "The atmosphere helps regulate Earth's temperature."
+    ]
+  },
+  "lithosphere": {
+    word: "lithosphere",
+    translation: "岩石圈",
+    partOfSpeech: "noun",
+    phonetic: "/ˈlɪθəˌsfɪər/",
+    meaning: "The rigid outer part of the earth, consisting of the crust and upper mantle.",
+    example: "The lithosphere is divided into tectonic plates.",
+    imageUrl: "🪨",
+    stages: [
+      {
+        title: "Recognition",
+        description: "Learn the meaning and pronunciation",
+      },
+      {
+        title: "Understanding",
+        description: "Understand the word in context",
+      },
+      {
+        title: "Practice",
+        description: "Practice using the word",
+      },
+      {
+        title: "Mastery",
+        description: "Master complex expressions",
+      }
+    ],
+    relatedWords: ["crust", "mantle"],
+    sentences: [
+      "The lithosphere is the outermost layer of Earth.",
+      "Earthquakes occur in the lithosphere.",
+      "The lithosphere is composed of both oceanic and continental crust."
+    ]
+  },
+  "longitude": {
+    word: "longitude",
+    translation: "经度",
+    partOfSpeech: "noun",
+    phonetic: "/ˈlɒŋɡɪtjuːd/",
+    meaning: "The angular distance of a place east or west of the Greenwich meridian.",
+    example: "London is at 0° longitude.",
+    imageUrl: "🧭",
+    stages: [
+      {
+        title: "Recognition",
+        description: "Learn the meaning and pronunciation",
+      },
+      {
+        title: "Understanding",
+        description: "Understand the word in context",
+      },
+      {
+        title: "Practice",
+        description: "Practice using the word",
+      },
+      {
+        title: "Mastery",
+        description: "Master complex expressions",
+      }
+    ],
+    relatedWords: ["latitude", "coordinates"],
+    sentences: [
+      "Lines of longitude run from north to south.",
+      "The prime meridian is at 0° longitude.",
+      "Longitude helps determine time zones."
+    ]
+  },
+  "latitude": {
+    word: "latitude",
+    translation: "纬度",
+    partOfSpeech: "noun",
+    phonetic: "/ˈlætɪtjuːd/",
+    meaning: "The angular distance of a place north or south of the earth's equator.",
+    example: "The equator is at 0° latitude.",
+    imageUrl: "📍",
+    stages: [
+      {
+        title: "Recognition",
+        description: "Learn the meaning and pronunciation",
+      },
+      {
+        title: "Understanding",
+        description: "Understand the word in context",
+      },
+      {
+        title: "Practice",
+        description: "Practice using the word",
+      },
+      {
+        title: "Mastery",
+        description: "Master complex expressions",
+      }
+    ],
+    relatedWords: ["longitude", "equator"],
+    sentences: [
+      "Lines of latitude run east to west.",
+      "The equator is the line of 0° latitude.",
+      "Climate varies with latitude."
+    ]
+  },
+  "horizon": {
+    word: "horizon",
+    translation: "地平线",
+    partOfSpeech: "noun",
+    phonetic: "/həˈraɪzn/",
+    meaning: "The line at which the earth's surface and the sky appear to meet.",
+    example: "The sun disappeared below the horizon.",
+    imageUrl: "🌅",
+    stages: [
+      {
+        title: "Recognition",
+        description: "Learn the meaning and pronunciation",
+      },
+      {
+        title: "Understanding",
+        description: "Understand the word in context",
+      },
+      {
+        title: "Practice",
+        description: "Practice using the word",
+      },
+      {
+        title: "Mastery",
+        description: "Master complex expressions",
+      }
+    ],
+    relatedWords: ["altitude", "landscape"],
+    sentences: [
+      "Dark clouds appeared on the horizon.",
+      "Ships gradually disappear over the horizon.",
+      "The horizon seems to move as you move."
+    ]
+  },
+  "altitude": {
+    word: "altitude",
+    translation: "海拔",
+    partOfSpeech: "noun",
+    phonetic: "/ˈæltɪtjuːd/",
+    meaning: "The height of an object or point above sea level.",
+    example: "The plane flew at an altitude of 30,000 feet.",
+    imageUrl: "⛰️",
+    stages: [
+      {
+        title: "Recognition",
+        description: "Learn the meaning and pronunciation",
+      },
+      {
+        title: "Understanding",
+        description: "Understand the word in context",
+      },
+      {
+        title: "Practice",
+        description: "Practice using the word",
+      },
+      {
+        title: "Mastery",
+        description: "Master complex expressions",
+      }
+    ],
+    relatedWords: ["height", "elevation"],
+    sentences: [
+      "The air is thinner at high altitudes.",
+      "The city lies at an altitude of 2000 meters.",
+      "Plants adapt to different altitudes."
     ]
   }
 };

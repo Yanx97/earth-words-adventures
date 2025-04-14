@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNavigation from "@/components/layout/BottomNavigation";
@@ -11,20 +12,21 @@ const mockLevels = [
   {
     id: "earth-layers",
     title: "Earth Layers",
-    progress: 3,
-    total: 10,
-    words: ["crust", "mantle", "core"],
+    progress: 0,
+    total: 6,
+    words: ["crust", "mantle", "core", "erupt", "magma", "volcano"],
     image: "🌍",
     route: "/earth-layers"
   },
   {
-    id: "volcanoes",
-    title: "Volcanoes",
+    id: "earth-geography",
+    title: "Earth Geography",
     progress: 0,
-    total: 8,
-    words: ["erupt", "magma", "volcano"],
-    image: "🌋",
-    locked: true
+    total: 7,
+    words: ["hydrosphere", "atmosphere", "lithosphere", "longitude", "latitude", "horizon", "altitude"],
+    image: "🌐",
+    locked: false,
+    route: "/earth-geography"
   },
   {
     id: "atmosphere",

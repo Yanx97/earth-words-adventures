@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import WordLearningPage from "./pages/WordLearningPage";
 import EarthLayersPage from "./pages/EarthLayersPage";
+import EarthGeographyPage from "./pages/EarthGeographyPage";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/learn/:wordId" element={<WordLearningPage />} />
             <Route path="/earth-layers" element={<EarthLayersPage />} />
+            <Route path="/earth-geography" element={<EarthGeographyPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
