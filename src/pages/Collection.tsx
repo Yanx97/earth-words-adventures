@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import StickerItem from "@/components/collection/StickerItem";
 import StickerScene from "@/components/collection/StickerScene";
-import type { PlacedSticker } from "@/types/stickers";
+import type { PlacedSticker, Sticker } from "@/types/stickers";
 
 const stickers = {
   "earth-unit": [
@@ -38,15 +38,6 @@ const bgImages = {
   "earth-unit": "bg-gradient-to-b from-earth-sky via-earth-crust to-earth-core",
   "animals-unit": "bg-gradient-to-b from-sky-300 via-emerald-200 to-amber-100",
 };
-
-interface PlacedSticker {
-  id: string;
-  x: number;
-  y: number;
-  image: string;
-  scale: number;
-  key: string;
-}
 
 const Collection = () => {
   const [selectedTab, setSelectedTab] = useState("earth-unit");
