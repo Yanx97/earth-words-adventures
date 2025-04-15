@@ -1,7 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import type { PlacedSticker } from '@/types/stickers';
+import { stickers } from '@/data/stickerData';
 
 export const useStickers = (initialUnit: string) => {
   const [selectedTab, setSelectedTab] = useState(initialUnit);
@@ -79,9 +79,10 @@ export const useStickers = (initialUnit: string) => {
     setStickerBeingDragged(`${index}`);
   };
 
-  const handleDragMove = (e: React.MouseEvent, index: number, sceneRect: DOMRect) => {
+  const handleDragMove = (e: React.MouseEvent, index: number) => {
     if (isDragging && stickerBeingDragged === `${index}`) {
       e.preventDefault();
+      const sceneRect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
       const x = ((e.clientX - sceneRect.left) / sceneRect.width) * 100;
       const y = ((e.clientY - sceneRect.top) / sceneRect.height) * 100;
       
