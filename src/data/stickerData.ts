@@ -1,4 +1,3 @@
-
 export const stickers = {
   "earth-unit": [
     { id: "crust", name: "Crust", chapter: "earth-layers", image: "🪨" },
@@ -28,3 +27,8 @@ export const bgImages = {
   "earth-unit": "bg-gradient-to-b from-earth-sky via-earth-crust to-earth-core",
   "animals-unit": "bg-gradient-to-b from-sky-300 via-emerald-200 to-amber-100",
 } as const;
+
+// Add a function to check if a sticker is unlocked
+export const isWordSticker = (stickerId: string): boolean => {
+  return Object.values(stickers).flat().some(s => s.id === stickerId);
+};

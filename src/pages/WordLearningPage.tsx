@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { wordLearningData } from "@/data/wordLearningData";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import LearningHeader from "@/components/learning/LearningHeader";
 import LearningFooter from "@/components/learning/LearningFooter";
 import RecognitionStage from "@/components/learning/stages/RecognitionStage";
@@ -11,15 +13,29 @@ import UnderstandingStage from "@/components/learning/stages/UnderstandingStage"
 import PracticeStage from "@/components/learning/stages/PracticeStage";
 import MasteryStage from "@/components/learning/stages/MasteryStage";
 
-// Define the chapter words
-const earthLayersWords = ["crust", "mantle", "core", "erupt", "magma", "volcano"];
-const earthGeographyWords = ["hydrosphere", "atmosphere", "lithosphere", "longitude", "latitude", "horizon", "altitude"];
+// Define the chapter words with their corresponding sticker IDs
+const wordToStickerMap: Record<string, string> = {
+  "crust": "crust",
+  "mantle": "mantle",
+  "core": "core",
+  "erupt": "erupt",
+  "magma": "magma",
+  "volcano": "volcano",
+  "hydrosphere": "hydrosphere",
+  "atmosphere": "atmosphere",
+  "lithosphere": "lithosphere",
+  "longitude": "longitude",
+  "latitude": "latitude",
+  "horizon": "horizon",
+  "altitude": "altitude"
+};
 
 const WordLearningPage = () => {
   const { wordId } = useParams<{ wordId: string }>();
   const navigate = useNavigate();
   const [currentStage, setCurrentStage] = useState(0);
   const [wordInfo, setWordInfo] = useState<any | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (wordId && wordLearningData[wordId as keyof typeof wordLearningData]) {
@@ -29,47 +45,44 @@ const WordLearningPage = () => {
     }
   }, [wordId, navigate]);
 
-  const getChapterPath = (word: string): string => {
-    if (earthLayersWords.includes(word)) return '/earth-layers';
-    if (earthGeographyWords.includes(word)) return '/earth-geography';
-    return '/';
+  const markWordAsComplete = (word: string) => {
+    // Get chapter for the word
+    const isEarthLayers = ["crust", "mantle", "core", "erupt", "magma", "volcano"].includes(word);
+    const storageKey = isEarthLayers ? 'completedEarthLayersWords' : 'completedEarthGeographyWords';
+
+    // Update completed words
+    const existingCompleted = localStorage.getItem(storageKey);
+    let completedWords: string[] = existingCompleted ? JSON.parse(existingCompleted) : [];
+    
+    if (!completedWords.includes(word)) {
+      completedWords.push(word);
+      localStorage.setItem(storageKey, JSON.stringify(completedWords));
+
+      // Show completion toast
+      toast({
+        title: "Word Mastered! 🎉",
+        description: "You've unlocked a new sticker in your collection!",
+      });
+    }
   };
 
-  useEffect(() => {
-    if (currentStage === 3 && wordId) {
-      // Get existing completed words
-      const existingCompleted = localStorage.getItem('completedEarthLayersWords');
-      let completedWords: string[] = existingCompleted ? JSON.parse(existingCompleted) : [];
-      
-      // Add current word if not already in the list
-      if (!completedWords.includes(wordId)) {
-        completedWords.push(wordId);
-        localStorage.setItem('completedEarthLayersWords', JSON.stringify(completedWords));
-      }
+  const getChapterPath = (word: string): string => {
+    if (["crust", "mantle", "core", "erupt", "magma", "volcano"].includes(word)) {
+      return '/earth-layers';
     }
-  }, [currentStage, wordId]);
-
-  if (!wordInfo) return <div>Loading...</div>;
+    if (["hydrosphere", "atmosphere", "lithosphere", "longitude", "latitude", "horizon", "altitude"].includes(word)) {
+      return '/earth-geography';
+    }
+    return '/';
+  };
 
   const handleNextStage = () => {
     if (currentStage < wordInfo.stages.length - 1) {
       setCurrentStage(currentStage + 1);
     } else {
-      // When completing the last stage, save progress and return to chapter
+      // When completing the last stage
       if (wordId) {
-        // Save completion state based on the chapter
-        const storageKey = earthLayersWords.includes(wordId) 
-          ? 'completedEarthLayersWords' 
-          : 'completedEarthGeographyWords';
-        
-        const existingCompleted = localStorage.getItem(storageKey);
-        let completedWords: string[] = existingCompleted ? JSON.parse(existingCompleted) : [];
-        
-        if (!completedWords.includes(wordId)) {
-          completedWords.push(wordId);
-          localStorage.setItem(storageKey, JSON.stringify(completedWords));
-        }
-
+        markWordAsComplete(wordId);
         navigate(getChapterPath(wordId));
       }
     }
