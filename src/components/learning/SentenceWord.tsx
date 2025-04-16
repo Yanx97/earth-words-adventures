@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface SentenceWordProps {
@@ -12,20 +12,6 @@ interface SentenceWordProps {
 const SentenceWord = ({ word, definition, isHighlighted, onClick }: SentenceWordProps) => {
   const cleanWord = word.replace(/[,.!?;:]/g, "");
   const hasDefinition = !!definition && cleanWord.length > 1;
-  const [isClicking, setIsClicking] = useState(false);
-  
-  const handleClick = () => {
-    if (isClicking) return;
-    setIsClicking(true);
-    
-    // Call the onClick handler
-    if (onClick) onClick();
-    
-    // Reset after a short delay
-    setTimeout(() => {
-      setIsClicking(false);
-    }, 500);
-  };
 
   return (
     <Popover>
@@ -34,7 +20,7 @@ const SentenceWord = ({ word, definition, isHighlighted, onClick }: SentenceWord
           className={`inline-block px-1 py-0.5 rounded cursor-pointer transition-colors ${
             isHighlighted ? 'bg-primary/20 text-primary' : 'hover:bg-muted'
           }`}
-          onClick={handleClick}
+          onClick={onClick}
         >
           {word}
         </span>

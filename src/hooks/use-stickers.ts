@@ -1,7 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import type { PlacedSticker } from '@/types/stickers';
-import { stickers } from '@/data/stickerData';
 
 export const useStickers = (initialUnit: string) => {
   const [selectedTab, setSelectedTab] = useState(initialUnit);
@@ -25,26 +25,10 @@ export const useStickers = (initialUnit: string) => {
       setPlacedStickers(initialPlacedStickers);
     }
 
-    loadUnlockedStickers();
-  }, []);
-
-  const loadUnlockedStickers = () => {
     const completedEarthLayersWords = JSON.parse(localStorage.getItem('completedEarthLayersWords') || '[]');
     const completedEarthGeographyWords = JSON.parse(localStorage.getItem('completedEarthGeographyWords') || '[]');
     
-    const unlocked = [...completedEarthLayersWords, ...completedEarthGeographyWords];
-    setUnlockedStickers(unlocked);
-    
-    if (unlocked.length > 0) {
-      console.log("Unlocked stickers:", unlocked);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('focus', loadUnlockedStickers);
-    return () => {
-      window.removeEventListener('focus', loadUnlockedStickers);
-    };
+    setUnlockedStickers([...completedEarthLayersWords, ...completedEarthGeographyWords]);
   }, []);
 
   useEffect(() => {
@@ -95,10 +79,9 @@ export const useStickers = (initialUnit: string) => {
     setStickerBeingDragged(`${index}`);
   };
 
-  const handleDragMove = (e: React.MouseEvent, index: number) => {
+  const handleDragMove = (e: React.MouseEvent, index: number, sceneRect: DOMRect) => {
     if (isDragging && stickerBeingDragged === `${index}`) {
       e.preventDefault();
-      const sceneRect = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
       const x = ((e.clientX - sceneRect.left) / sceneRect.width) * 100;
       const y = ((e.clientY - sceneRect.top) / sceneRect.height) * 100;
       
@@ -181,6 +164,5 @@ export const useStickers = (initialUnit: string) => {
     handleDuplicateSticker,
     handleRemoveSticker,
     handleSaveScene,
-    loadUnlockedStickers,
   };
 };
