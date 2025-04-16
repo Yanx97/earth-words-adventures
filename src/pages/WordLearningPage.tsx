@@ -35,11 +35,14 @@ const WordLearningPage = () => {
   const navigate = useNavigate();
   const [currentStage, setCurrentStage] = useState(0);
   const [wordInfo, setWordInfo] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
+    setIsLoading(true);
     if (wordId && wordLearningData[wordId as keyof typeof wordLearningData]) {
       setWordInfo(wordLearningData[wordId as keyof typeof wordLearningData]);
+      setIsLoading(false);
     } else {
       navigate("/");
     }
@@ -77,6 +80,8 @@ const WordLearningPage = () => {
   };
 
   const handleNextStage = () => {
+    if (!wordInfo) return;
+    
     if (currentStage < wordInfo.stages.length - 1) {
       setCurrentStage(currentStage + 1);
     } else {
@@ -105,6 +110,8 @@ const WordLearningPage = () => {
   };
 
   const renderStageContent = () => {
+    if (!wordInfo) return null;
+    
     switch (currentStage) {
       case 0: // Recognition
         return <RecognitionStage wordInfo={wordInfo} />;
@@ -118,6 +125,11 @@ const WordLearningPage = () => {
         return <div>Unknown stage</div>;
     }
   };
+
+  // Show loading state or redirect if word not found
+  if (isLoading || !wordInfo) {
+    return <div className="container max-w-md mx-auto px-4 py-20 text-center">Loading...</div>;
+  }
 
   return (
     <div className="pb-20">
@@ -166,7 +178,7 @@ const WordLearningPage = () => {
         onPrevious={handlePrevStage}
         onNext={handleNextStage}
         isFirstStage={currentStage === 0}
-        isLastStage={currentStage === wordInfo.stages.length - 1}
+        isLastStage={currentStage === wordInfo?.stages.length - 1}
       />
     </div>
   );
