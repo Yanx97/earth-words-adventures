@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 interface VocabCardProps {
   word: string;
@@ -24,9 +24,9 @@ const VocabCard = ({ word, imageUrl, translation, isCompleted = false }: VocabCa
     >
       {isCompleted && (
         <div className="absolute top-2 right-2 z-10">
-          <Badge variant="outline" className="bg-primary/10 border-primary/30">
-            <Check className="h-3 w-3 mr-1" />
-            Completed
+          <Badge variant="outline" className="bg-primary/10 border-primary/30 flex items-center gap-1 px-2 py-0.5">
+            <CheckCircle className="h-3 w-3" />
+            <span>Completed</span>
           </Badge>
         </div>
       )}

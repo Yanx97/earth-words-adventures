@@ -25,10 +25,26 @@ export const useStickers = (initialUnit: string) => {
       setPlacedStickers(initialPlacedStickers);
     }
 
+    loadUnlockedStickers();
+  }, []);
+
+  const loadUnlockedStickers = () => {
     const completedEarthLayersWords = JSON.parse(localStorage.getItem('completedEarthLayersWords') || '[]');
     const completedEarthGeographyWords = JSON.parse(localStorage.getItem('completedEarthGeographyWords') || '[]');
     
-    setUnlockedStickers([...completedEarthLayersWords, ...completedEarthGeographyWords]);
+    const unlocked = [...completedEarthLayersWords, ...completedEarthGeographyWords];
+    setUnlockedStickers(unlocked);
+    
+    if (unlocked.length > 0) {
+      console.log("Unlocked stickers:", unlocked);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('focus', loadUnlockedStickers);
+    return () => {
+      window.removeEventListener('focus', loadUnlockedStickers);
+    };
   }, []);
 
   useEffect(() => {
@@ -165,5 +181,6 @@ export const useStickers = (initialUnit: string) => {
     handleDuplicateSticker,
     handleRemoveSticker,
     handleSaveScene,
+    loadUnlockedStickers,
   };
 };

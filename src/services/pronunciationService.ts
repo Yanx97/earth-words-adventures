@@ -8,6 +8,9 @@ interface PronunciationOptions {
   modelId?: string;
 }
 
+// Create a map to track audio playback state
+const audioPlaybackMap: Record<string, boolean> = {};
+
 export const pronunciationService = {
   // Using the ElevenLabs API for high quality pronunciation
   async getAudio(word: string, options: PronunciationOptions = {}): Promise<string | null> {
@@ -24,8 +27,15 @@ export const pronunciationService = {
   },
   
   async playAudio(word: string, options: PronunciationOptions = {}): Promise<void> {
+    // Check if audio is already playing for this word
+    if (audioPlaybackMap[word]) {
+      console.log(`Audio already playing for ${word}, skipping`);
+      return;
+    }
+    
     try {
       console.log(`Playing audio for ${word}`);
+      audioPlaybackMap[word] = true;
       
       // Free dictionary API has some common words with pronunciation
       const audio = new Audio();
@@ -39,6 +49,12 @@ export const pronunciationService = {
           utterance.lang = 'en-US';
           speechSynthesis.speak(utterance);
         }
+        audioPlaybackMap[word] = false;
+      };
+      
+      // Clear playback lock when audio ends
+      audio.onended = () => {
+        audioPlaybackMap[word] = false;
       };
       
       await audio.play();
@@ -51,6 +67,8 @@ export const pronunciationService = {
         utterance.lang = 'en-US';
         speechSynthesis.speak(utterance);
       }
+      
+      audioPlaybackMap[word] = false;
     }
   }
 };

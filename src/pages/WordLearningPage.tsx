@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -47,16 +48,21 @@ const WordLearningPage = () => {
   }, [wordId, navigate]);
 
   const markWordAsComplete = (word: string) => {
+    if (!word) return;
+    
     const isEarthLayers = ["crust", "mantle", "core", "erupt", "magma", "volcano"].includes(word);
     const storageKey = isEarthLayers ? 'completedEarthLayersWords' : 'completedEarthGeographyWords';
 
+    // Get current completed words
     const existingCompleted = localStorage.getItem(storageKey);
     let completedWords: string[] = existingCompleted ? JSON.parse(existingCompleted) : [];
     
+    // Only add if not already completed
     if (!completedWords.includes(word)) {
       completedWords.push(word);
       localStorage.setItem(storageKey, JSON.stringify(completedWords));
 
+      // Show completion toast
       toast({
         title: "Word Mastered! 🎉",
         description: "You've unlocked a new sticker in your collection!",
@@ -80,7 +86,9 @@ const WordLearningPage = () => {
     if (currentStage < wordInfo.stages.length - 1) {
       setCurrentStage(currentStage + 1);
     } else {
+      // When completing the last stage
       if (wordId) {
+        // Mark as complete before navigating
         markWordAsComplete(wordId);
         navigate(getChapterPath(wordId));
       }
