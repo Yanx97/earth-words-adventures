@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -13,7 +12,6 @@ import UnderstandingStage from "@/components/learning/stages/UnderstandingStage"
 import PracticeStage from "@/components/learning/stages/PracticeStage";
 import MasteryStage from "@/components/learning/stages/MasteryStage";
 
-// Define the chapter words with their corresponding sticker IDs
 const wordToStickerMap: Record<string, string> = {
   "crust": "crust",
   "mantle": "mantle",
@@ -49,11 +47,9 @@ const WordLearningPage = () => {
   }, [wordId, navigate]);
 
   const markWordAsComplete = (word: string) => {
-    // Get chapter for the word
     const isEarthLayers = ["crust", "mantle", "core", "erupt", "magma", "volcano"].includes(word);
     const storageKey = isEarthLayers ? 'completedEarthLayersWords' : 'completedEarthGeographyWords';
 
-    // Update completed words
     const existingCompleted = localStorage.getItem(storageKey);
     let completedWords: string[] = existingCompleted ? JSON.parse(existingCompleted) : [];
     
@@ -61,7 +57,6 @@ const WordLearningPage = () => {
       completedWords.push(word);
       localStorage.setItem(storageKey, JSON.stringify(completedWords));
 
-      // Show completion toast
       toast({
         title: "Word Mastered! 🎉",
         description: "You've unlocked a new sticker in your collection!",
@@ -85,7 +80,6 @@ const WordLearningPage = () => {
     if (currentStage < wordInfo.stages.length - 1) {
       setCurrentStage(currentStage + 1);
     } else {
-      // When completing the last stage
       if (wordId) {
         markWordAsComplete(wordId);
         navigate(getChapterPath(wordId));
@@ -126,14 +120,12 @@ const WordLearningPage = () => {
     }
   };
 
-  // Show loading state or redirect if word not found
   if (isLoading || !wordInfo) {
     return <div className="container max-w-md mx-auto px-4 py-20 text-center">Loading...</div>;
   }
 
   return (
     <div className="pb-20">
-      {/* Exit button */}
       <div className="fixed top-3 right-3 z-40">
         <Button 
           variant="outline" 
