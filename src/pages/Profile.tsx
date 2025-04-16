@@ -1,40 +1,74 @@
 
+import { useState, useEffect } from "react";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import { Card } from "@/components/ui/card";
 import {
-  Calendar,
+  Calendar as CalendarIcon,
   Settings,
   Globe,
   BookOpen,
   Award,
   Star,
-  Volume2
+  Volume2,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-
-// Mock user data
-const userData = {
-  name: "Alex Chen",
-  level: 4,
-  title: "Geography Explorer",
-  streakDays: 7,
-  wordsLearned: 42,
-  wordsToReview: 15,
-  progress: {
-    currentLevel: 65, // percentage
-    nextMilestone: 100, // words
-    currentCount: 42, // words
-  },
-  achievements: [
-    { name: "7-Day Streak", icon: Calendar, earned: true },
-    { name: "Earth Specialist", icon: Globe, earned: true },
-    { name: "Vocabulary Builder", icon: BookOpen, earned: false },
-    { name: "Quiz Master", icon: Award, earned: false },
-  ]
-};
+import { Calendar } from "@/components/ui/calendar";
+import { 
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const Profile = () => {
+  const [wordsLearned, setWordsLearned] = useState(0);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [streakDays, setStreakDays] = useState(0);
+
+  // Calculate words learned and streak from localStorage
+  useEffect(() => {
+    // Get completed words
+    const completedEarthLayersWords = JSON.parse(localStorage.getItem('completedEarthLayersWords') || '[]');
+    const completedEarthGeographyWords = JSON.parse(localStorage.getItem('completedEarthGeographyWords') || '[]');
+    
+    const totalWordsLearned = [...completedEarthLayersWords, ...completedEarthGeographyWords].length;
+    setWordsLearned(totalWordsLearned);
+
+    // Get streak data from localStorage or create it if it doesn't exist
+    const streakData = JSON.parse(localStorage.getItem('streakData') || '[]');
+    
+    // Calculate streak days (for demo purposes - in a real app this would be more sophisticated)
+    setStreakDays(streakData.length > 0 ? streakData.length : 0);
+    
+    // Convert string dates to Date objects for the calendar
+    const dates = streakData.map((dateStr: string) => new Date(dateStr));
+    setSelectedDates(dates);
+  }, []);
+
+  // Mock user data (but now with dynamic values for words learned and streak)
+  const userData = {
+    name: "Alex Chen",
+    level: 4,
+    title: "Geography Explorer",
+    streakDays,
+    wordsLearned,
+    wordsToReview: 15,
+    progress: {
+      currentLevel: Math.min(wordsLearned * 2, 100), // percentage, calculated from words learned
+      nextMilestone: 100, // words
+      currentCount: wordsLearned, // words
+    },
+    achievements: [
+      { name: "7-Day Streak", icon: CalendarIcon, earned: streakDays >= 7 },
+      { name: "Earth Specialist", icon: Globe, earned: wordsLearned >= 10 },
+      { name: "Vocabulary Builder", icon: BookOpen, earned: wordsLearned >= 20 },
+      { name: "Quiz Master", icon: Award, earned: false },
+    ]
+  };
+
   return (
     <div className="pb-20">
       {/* Top header */}
@@ -66,15 +100,45 @@ const Profile = () => {
         </div>
 
         {/* Stats cards */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 gap-4 mb-8">
+          {/* Streak Card with Collapsible Calendar */}
           <Card className="p-4">
-            <div className="text-xl font-bold">{userData.streakDays}</div>
-            <div className="text-sm text-muted-foreground flex items-center">
-              <Calendar className="h-4 w-4 mr-1" />
-              Day Streak
-            </div>
+            <Collapsible 
+              open={calendarOpen} 
+              onOpenChange={setCalendarOpen}
+              className="w-full"
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="text-xl font-bold">{userData.streakDays}</div>
+                  <div className="text-sm text-muted-foreground flex items-center">
+                    <CalendarIcon className="h-4 w-4 mr-1" />
+                    Day Streak
+                  </div>
+                </div>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm" className="p-1">
+                    {calendarOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+              
+              <CollapsibleContent className="mt-4">
+                <div className="border rounded-md p-1 bg-background">
+                  <Calendar
+                    mode="multiple"
+                    selected={selectedDates}
+                    className="rounded-md border-none"
+                  />
+                  <div className="text-xs text-center text-muted-foreground mt-2 mb-1">
+                    Highlighted days show your learning activity
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </Card>
           
+          {/* Words Learned Card */}
           <Card className="p-4">
             <div className="text-xl font-bold">{userData.wordsLearned}</div>
             <div className="text-sm text-muted-foreground flex items-center">

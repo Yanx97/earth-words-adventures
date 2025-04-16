@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { wordLearningData } from "@/data/wordLearningData";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import LearningHeader from "@/components/learning/LearningHeader";
 import LearningFooter from "@/components/learning/LearningFooter";
 import RecognitionStage from "@/components/learning/stages/RecognitionStage";
@@ -20,6 +22,7 @@ const WordLearningPage = () => {
   const navigate = useNavigate();
   const [currentStage, setCurrentStage] = useState(0);
   const [wordInfo, setWordInfo] = useState<any | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (wordId && wordLearningData[wordId as keyof typeof wordLearningData]) {
@@ -35,27 +38,28 @@ const WordLearningPage = () => {
     return '/';
   };
 
-  useEffect(() => {
-    if (currentStage === 3 && wordId) {
-      // Get existing completed words
-      const existingCompleted = localStorage.getItem('completedEarthLayersWords');
-      let completedWords: string[] = existingCompleted ? JSON.parse(existingCompleted) : [];
-      
-      // Add current word if not already in the list
-      if (!completedWords.includes(wordId)) {
-        completedWords.push(wordId);
-        localStorage.setItem('completedEarthLayersWords', JSON.stringify(completedWords));
-      }
+  // Update streak data when a word is completed
+  const updateStreakData = () => {
+    // Get current date in YYYY-MM-DD format
+    const today = new Date();
+    const dateStr = today.toISOString().split('T')[0];
+    
+    // Get existing streak data
+    const existingStreakData = localStorage.getItem('streakData');
+    let streakDates: string[] = existingStreakData ? JSON.parse(existingStreakData) : [];
+    
+    // Add today's date if not already in the list
+    if (!streakDates.includes(dateStr)) {
+      streakDates.push(dateStr);
+      localStorage.setItem('streakData', JSON.stringify(streakDates));
     }
-  }, [currentStage, wordId]);
-
-  if (!wordInfo) return <div>Loading...</div>;
+  };
 
   const handleNextStage = () => {
-    if (currentStage < wordInfo.stages.length - 1) {
+    if (currentStage < (wordInfo?.stages?.length - 1 || 0)) {
       setCurrentStage(currentStage + 1);
     } else {
-      // When completing the last stage, save progress and return to chapter
+      // When completing the last stage, save progress, update streak and return to chapter
       if (wordId) {
         // Save completion state based on the chapter
         const storageKey = earthLayersWords.includes(wordId) 
@@ -68,6 +72,15 @@ const WordLearningPage = () => {
         if (!completedWords.includes(wordId)) {
           completedWords.push(wordId);
           localStorage.setItem(storageKey, JSON.stringify(completedWords));
+          
+          // Update streak data
+          updateStreakData();
+          
+          // Show toast notification
+          toast({
+            title: "Word mastered!",
+            description: `You've completed learning "${wordId}". A new sticker has been unlocked!`,
+          });
         }
 
         navigate(getChapterPath(wordId));
@@ -79,7 +92,11 @@ const WordLearningPage = () => {
     if (currentStage > 0) {
       setCurrentStage(currentStage - 1);
     } else {
-      navigate("/earth-layers");
+      if (wordId) {
+        navigate(getChapterPath(wordId));
+      } else {
+        navigate('/');
+      }
     }
   };
 
@@ -92,6 +109,8 @@ const WordLearningPage = () => {
   };
 
   const renderStageContent = () => {
+    if (!wordInfo) return <div>Loading...</div>;
+    
     switch (currentStage) {
       case 0: // Recognition
         return <RecognitionStage wordInfo={wordInfo} />;
@@ -105,6 +124,8 @@ const WordLearningPage = () => {
         return <div>Unknown stage</div>;
     }
   };
+
+  if (!wordInfo) return <div className="flex justify-center items-center h-screen">Loading...</div>;
 
   return (
     <div className="pb-20">
